@@ -53,9 +53,9 @@ http {
  
   # Limit ciphers allowed 
   #ssl_ciphers TLS_ECDHE_RSA_WITH_RC4_128_SHA:TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA:TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA:TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA:TLS_DHE_RSA_WITH_AES_128_CBC_SHA:HIGH:!aNULL:!MD5;
-  ssl_ciphers AES128-GCM-SHA256:RC4-SHA:RC4-MD5:AES128-SHA:AES256-SHA;	
+  # ssl_ciphers AES128-GCM-SHA256:RC4-SHA:RC4-MD5:AES128-SHA:AES256-SHA;  
   # ssl_ciphers ALL:!ADH:!aNULL:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP:!ECDH;
-  # ssl_ciphers ALL:!aNULL:!ADH:!eNULL:!LOW:!MEDIUM:!EXP:RC4+RSA:+HIGH;
+  ssl_ciphers ALL:!aNULL:!ADH:!eNULL:!LOW:!MEDIUM:!EXP:RC4+RSA:+HIGH;
 
   # Prefer server ciphers (Prefer RC4 first to combat BEAST) 	    
   ssl_prefer_server_ciphers on;	   
