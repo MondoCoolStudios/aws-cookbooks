@@ -1,0 +1,65 @@
+user <%= node[:nginx][:user] %>;
+worker_processes  <%= node[:nginx][:worker_processes] %>;
+
+error_log  <%= node[:nginx][:log_dir] %>/error.log;
+pid        <%= node[:nginx][:pid_file] %>;
+
+events {
+  worker_connections  <%= node[:nginx][:worker_connections] %>;
+}
+
+http {
+  include       <%= node[:nginx][:dir] %>/mime.types;
+  default_type  application/octet-stream;
+
+  <% node[:nginx][:log_format].each do |name, format| %>
+  log_format <%= name %> <%= format %>;
+  <% end %>
+
+  access_log	<%= node[:nginx][:log_dir] %>/access.log;
+
+  sendfile on;
+  tcp_nopush on;
+  tcp_nodelay on;
+
+  <% if node[:nginx][:keepalive] == "on" %>
+  keepalive_timeout  <%= node[:nginx][:keepalive_timeout] %>;
+  <% end %>
+
+  gzip  <%= node[:nginx][:gzip] %>;
+  gzip_static  <%= node[:nginx][:gzip_static] %>;
+  <% if node[:nginx][:gzip] == "on" %>
+  gzip_http_version <%= node[:nginx][:gzip_http_version] %>;
+  gzip_comp_level <%= node[:nginx][:gzip_comp_level] %>;
+  gzip_proxied <%= node[:nginx][:gzip_proxied] %>;
+  gzip_types <%= node[:nginx][:gzip_types].join(' ') %>;
+  gzip_vary <%= node[:nginx][:gzip_vary] %>;
+  gzip_disable "<%= node[:nginx][:gzip_disable] %>";
+  <% end %>
+
+  client_max_body_size <%= node[:nginx][:client_max_body_size] %>;
+
+  server_names_hash_bucket_size <%= node[:nginx][:server_names_hash_bucket_size] %>;
+
+  # Enable a shared cache, since it is defined at this level 	
+  # it will be used for all virtual hosts. 1m = 4000 active sessions, 	
+  # so we are allowing 200,000 active sessions. 
+  ssl_session_cache shared:SSL:10m;
+  ssl_session_timeout 10m;
+
+  # SSLv2 is insecure, only allow SSLv3 and TLSv1 
+  #ssl_protocols             SSLv3 TLSv1;
+  ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2;	    
+ 
+  # Limit ciphers allowed 
+  #ssl_ciphers TLS_ECDHE_RSA_WITH_RC4_128_SHA:TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA:TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA:TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA:TLS_DHE_RSA_WITH_AES_128_CBC_SHA:HIGH:!aNULL:!MD5;
+  ssl_ciphers AES128-GCM-SHA256:RC4-SHA:RC4-MD5:AES128-SHA:AES256-SHA;	
+  # ssl_ciphers ALL:!ADH:!aNULL:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv3:+EXP:!ECDH;
+  # ssl_ciphers ALL:!aNULL:!ADH:!eNULL:!LOW:!MEDIUM:!EXP:RC4+RSA:+HIGH;
+
+  # Prefer server ciphers (Prefer RC4 first to combat BEAST) 	    
+  ssl_prefer_server_ciphers on;	   
+
+  include <%= node[:nginx][:dir] %>/conf.d/*.conf;
+  include <%= node[:nginx][:dir] %>/sites-enabled/*;
+}
