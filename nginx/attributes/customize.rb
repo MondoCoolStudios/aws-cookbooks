@@ -20,7 +20,7 @@
 normal[:nginx][:force_ssl] = true
 
 # Prefer server ciphers (Prefer RC4 first to combat BEAST) 
-normal[:nginx][:ssl_prefer_server_ciphers] = on
+normal[:nginx][:ssl_prefer_server_ciphers] = 'on'
 
 # The following allows specification of the ssl_protocols
 # The default ssl_protocols will be used if not set.
