@@ -44,6 +44,8 @@ server {
   ssl_client_certificate <%= node[:nginx][:dir] %>/ssl/<%= @application[:domains].first %>.ca;
   <% end -%>
 
+  # <% unless node[:nginx][:ssl_protocols].nil? -%>
+  
   <% unless node[:nginx][:ssl_protocols].nil? -%>
     <% if node[:nginx][:ssl_protocols].respond_to?(:join) -%>
       ssl_protocols <%= node[:nginx][:ssl_protocols].join(' ') %>
@@ -51,6 +53,8 @@ server {
       ssl_protocols <%= node[:nginx][:ssl_protocols] %>
     <% end -%>
   <% end -%>
+
+  # <% unless node[:nginx][:ssl_ciphers].nil? -%>
 
   <% unless node[:nginx][:ssl_ciphers].nil? -%>
     <% if node[:nginx][:ssl_ciphers].respond_to?(:join) -%>
@@ -60,6 +64,8 @@ server {
     <% end -%>
   <% end -%>
 
+  # <% unless node[:nginx][:ssl_session_cache].nil? -%>
+
   <% unless node[:nginx][:ssl_session_cache].nil? -%>
     <% if node[:nginx][:ssl_session_cache].respond_to?(:join) -%>
       ssl_session_cache <%= node[:nginx][:ssl_session_cache].join(':') %>
@@ -68,13 +74,19 @@ server {
     <% end -%>
   <% end -%>
 
+  # <% unless node[:nginx][:ssl_session_timeout].present? -%>
+
   <% if node[:nginx][:ssl_session_timeout].present? -%>
     ssl_session_timeout <%= node[:nginx][:ssl_session_timeout] %>
   <% end -%>
 
+  # <% unless node[:nginx][:ssl_prefer_server_ciphers].present? -%>
+
   <% if node[:nginx][:ssl_prefer_server_ciphers].present? -%>
     ssl_prefer_server_ciphers <%= node[:nginx][:ssl_prefer_server_ciphers] %>
   <% end -%>
+
+  # <% unless node[:nginx][:ssl_dhparam].nil? -%>
 
   <% if node[:nginx][:ssl_dhparam]? -%>
     ssl_dhparam <%= node[:nginx][:dir] + "/ssl/dhparam.pem" %>
