@@ -37,7 +37,7 @@ normal[:nginx][:ssl_ciphers] = ['EECDH+AESGCM', 'EDH+AESGCM', 'AES256+EECDH', 'A
 normal[:nginx][:ssl_session_cache] = ['shared', 'SSL', '50m']
 
 # The SSL default cache timeout
-normal[:nginx][:ssl_session_timeout] = 5m
+normal[:nginx][:ssl_session_timeout] = '5m'
 
 # generate with openssl dhparam -out /etc/nginx/ssl/dhparam.pem 4096
 # ssl_dhparam /etc/nginx/ssl/dhparam.pem; 
