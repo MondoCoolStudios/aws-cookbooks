@@ -1,0 +1,98 @@
+server {
+  listen   80;
+  server_name  <%= @application[:domains].join(" ") %> <%= node[:hostname] %>;
+  access_log  <%= node[:nginx][:log_dir] %>/<%= @application[:domains].first %>.access.log;
+
+  <% if node[:nginx][:force_ssl] -%>
+  return 301 https://$server_name$request_uri?;
+  <% end -%>
+
+  location / {
+    root   <%= @application[:absolute_document_root] %>;
+    index  index.html index.htm index.php;
+  }
+
+  # Block all svn access
+  if ($request_uri ~* ^.*\.svn.*$) {
+     return 404;
+  }
+
+  # Block all git access
+  if ($request_uri ~* ^.*\.git.*$) {
+     return 404;
+  }
+
+  location /nginx_status {
+    stub_status on;
+    access_log off;
+    allow 127.0.0.1;
+    deny all;
+  }
+
+}
+
+<% if @application[:ssl_support] %>
+server {
+  listen   443;
+  server_name  <%= @application[:domains].join(" ") %> <%= node[:hostname] %>;
+  access_log  <%= node[:nginx][:log_dir] %>/<%= @application[:domains].first %>-ssl.access.log;
+
+  ssl on;
+  ssl_certificate <%= node[:nginx][:dir] %>/ssl/<%= @application[:domains].first %>.crt;
+  ssl_certificate_key <%= node[:nginx][:dir] %>/ssl/<%= @application[:domains].first %>.key;
+  <% if @application[:ssl_certificate_ca] -%>
+  ssl_client_certificate <%= node[:nginx][:dir] %>/ssl/<%= @application[:domains].first %>.ca;
+  <% end -%>
+
+  <% unless node[:nginx][:ssl_protocols].nil? -%>
+    <% if node[:nginx][:ssl_protocols].respond_to?(:join) -%>
+      ssl_protocols <%= node[:nginx][:ssl_protocols].join(' ') %>
+    <% elsif -%>
+      ssl_protocols <%= node[:nginx][:ssl_protocols] %>
+    <% end -%>
+  <% end -%>
+
+  <% unless node[:nginx][:ssl_ciphers].nil? -%>
+    <% if node[:nginx][:ssl_ciphers].respond_to?(:join) -%>
+      ssl_ciphers <%= node[:nginx][:ssl_ciphers].join(':') %>
+    <% elsif -%>
+      ssl_ciphers <%= node[:nginx][:ssl_ciphers] %>
+    <% end -%>
+  <% end -%>
+
+  <% unless node[:nginx][:ssl_session_cache].nil? -%>
+    <% if node[:nginx][:ssl_session_cache].respond_to?(:join) -%>
+      ssl_session_cache <%= node[:nginx][:ssl_session_cache].join(':') %>
+    <% elsif -%>
+      ssl_session_cache <%= node[:nginx][:ssl_session_cache] %>
+    <% end -%>
+  <% end -%>
+
+  <% if node[:nginx][:ssl_session_timeout].present? -%>
+    ssl_session_timeout <%= node[:nginx][:ssl_session_timeout] %>
+  <% end -%>
+
+  <% if node[:nginx][:ssl_prefer_server_ciphers].present? -%>
+    ssl_prefer_server_ciphers <%= node[:nginx][:ssl_prefer_server_ciphers] %>
+  <% end -%>
+
+  <% if node[:nginx][:ssl_dhparam]? -%>
+    ssl_dhparam <%= node[:nginx][:dir] + "/ssl/dhparam.pem" %>
+  <% end -%>
+
+  location / {
+    root   <%= @application[:absolute_document_root] %>;
+    index  index.html index.htm index.php;
+  }
+
+  # Block all svn access
+  if ($request_uri ~* ^.*\.svn.*$) {
+     return 404;
+  }
+
+  # Block all git access
+  if ($request_uri ~* ^.*\.git.*$) {
+     return 404;
+  }
+}
+<% end %>
