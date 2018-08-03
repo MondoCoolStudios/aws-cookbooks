@@ -33,7 +33,7 @@ server {
 
 <% if @application[:ssl_support] %>
 server {
-  listen   443;
+  listen 443 ssl http2;
   server_name  <%= @application[:domains].join(" ") %> <%= node[:hostname] %>;
   access_log  <%= node[:nginx][:log_dir] %>/<%= @application[:domains].first %>-ssl.access.log;
 
@@ -45,7 +45,7 @@ server {
   <% end -%>
 
   # <% unless node[:nginx][:ssl_protocols].nil? -%>
-  
+
   <% unless node[:nginx][:ssl_protocols].nil? -%>
     <% if node[:nginx][:ssl_protocols].respond_to?(:join) -%>
       ssl_protocols <%= node[:nginx][:ssl_protocols].join(' ') %>
