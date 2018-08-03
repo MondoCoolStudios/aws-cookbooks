@@ -15,6 +15,8 @@
 
 # --------------------------------------
 
+# help: https://raymii.org/s/tutorials/Strong_SSL_Security_On_nginx.html
+
 # SSL
 
 # The following allows ssl to be enforced by all connections by
@@ -29,14 +31,14 @@ normal[:nginx][:ssl_prefer_server_ciphers] = 'on'
 # See: http://nginx.org/en/docs/http/configuring_https_servers.html
 #normal[:nginx][:ssl_protocols] = 'TLSv1 TLSv1.1 TLSv1.2'
 # arrays are also supported
-normal[:nginx][:ssl_protocols] = ['TLSv1', 'TLSv1.1', 'TLSv1.2']
+normal[:nginx][:ssl_protocols] = ['TLSv1', 'TLSv1.1', 'TLSv1.2', 'TLSv1.3']
 
 # Limit ciphers allowed
 normal[:nginx][:ssl_ciphers] = ['EECDH+AESGCM', 'EDH+AESGCM', 'AES256+EECDH', 'AES256+EDH', '!aNULL', '!eNULL', '!EXPORT', '!DES', '!RC4', '!3DES', '!MD5', '!PSK', '!ADH', '!EDH', '!CAMELLIA', '!LOW', '!MEDIUM', '!EXP']
 
 # Enable a shared cache, since it is defined at this level
 # it will be used for all virtual hosts. 1m = 4000 active sessions,
-normal[:nginx][:ssl_session_cache] = ['shared', 'SSL', '10m']
+normal[:nginx][:ssl_session_cache] = ['shared', 'SSL', '11m']
 
 # The SSL default cache timeout
 normal[:nginx][:ssl_session_timeout] = '5m'
